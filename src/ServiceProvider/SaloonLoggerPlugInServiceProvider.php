@@ -10,7 +10,7 @@ class SaloonLoggerPlugInServiceProvider extends ServiceProvider
     {
         $this->publishesMigrations([
             __DIR__.'/../database/migrations' => database_path('migrations'),
-        ]);
+        ], 'saloon-logger-migrations');
 
         $this->publishes([
             __DIR__.'/../config/saloon_logger.php' => config_path('saloon-logger.php'),
