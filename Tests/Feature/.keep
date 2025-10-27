@@ -1,0 +1,135 @@
+<?php
+
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use YourVendor\SaloonApiTracer\Models\ApiTrace;
+use YourVendor\SaloonApiTracer\Requests\ExampleRequest;
+use YourVendor\SaloonApiTracer\Traits\LogsApiTraffic;
+use Saloon\Http\Connector;
+use Saloon\Http\Faking\MockClient;
+use Saloon\Http\Faking\MockResponse;
+use Saloon\Exceptions\Request\RequestException;
+
+// Clase de Conector de Prueba (Mockeada para evitar dependencias externas)
+// La clase de prueba debe estar fuera de la función 'test' si no se usa Pest's "uses"
+class TestConnector extends Connector
+{
+    use LogsApiTraffic;
+
+    public function resolveBaseUrl(): string
+    {
+        return 'https://test-api.com';
+    }
+}
+
+// Configuración de la base de datos para todas las pruebas en este archivo
+uses(RefreshDatabase::class);
+
+/**
+ * Prueba de Característica para el Saloon API Tracer (Sintaxis Pest).
+ */
+
+test('it logs request and response successfully', function () {
+    // ARRANGE: Configuración del Mock para simular una respuesta exitosa
+    $mockClient = new MockClient([
+        MockResponse::make([
+            'id' => 123,
+            'status' => 'success'
+        ], 201, ['Content-Type' => 'application/json'])
+    ]);
+
+    // ACT: Envío de la solicitud
+    $connector = new TestConnector();
+    // La Request incluye un payload sensible y un header de Autorización por defecto.
+    $request = new ExampleRequest(password: 'sensitive_data');
+
+    $response = $connector->send($request, $mockClient);
+
+    // Obtener el traceId generado por el trait
+    $traceId = $response->getPendingRequest()->getHeaders()['X-Trace-Id'] ?? null;
+
+    // ASSERT: Comprobar la respuesta HTTP
+    expect($response->successful())->toBeTrue()
+        ->and($response->status())->toBe(201);
+
+    // ASSERT: Comprobar registros en la base de datos
+    // Debe haber 1 REQUEST (fase inicial) y 1 RESPONSE (fase exitosa).
+    $this->assertDatabaseCount('api_traces', 2);
+
+    // 1. Verificar el registro de REQUEST
+    $this->assertDatabaseHas('api_traces', [
+        'trace_id' => $traceId,
+        'phase' => 'request',
+        'method' => 'POST',
+        'endpoint' => 'https://test-api.com/users',
+        'status' => null,
+    ]);
+
+    $requestTrace = ApiTrace::where('trace_id', $traceId)->where('phase', 'request')->first();
+
+    // Verificación adicional: que el campo sensible 'password' fue redactado
+    expect($requestTrace->payload['password'])->toBe('***REDACTED***');
+    // Verificación adicional: que el header de 'Authorization' existe (y fue redactado por ApiTracer, aunque aquí solo verificamos existencia)
+    expect($requestTrace->headers)->toHaveKey('Authorization');
+
+    // 2. Verificar el registro de RESPONSE
+    $this->assertDatabaseHas('api_traces', [
+        'trace_id' => $traceId,
+        'phase' => 'response',
+        'status' => 201, // Verifica el código de respuesta guardado
+    ]);
+
+    $responseTrace = ApiTrace::where('trace_id', $traceId)->where('phase', 'response')->first();
+
+    // Verificación adicional: que el cuerpo de la respuesta se guardó correctamente
+    expect($responseTrace->response)->toBe(['id' => 123, 'status' => 'success']);
+
+})->group('success');
+
+
+test('it logs request and exception on failure', function () {
+    // ARRANGE: Configuración del Mock para simular un fallo de red/excepción
+    $mockClient = new MockClient([
+        MockResponse::make('Server Error', 500),
+    ]);
+
+    // ACT: Envío de la solicitud que fallará
+    $connector = new TestConnector();
+    $request = new ExampleRequest();
+
+    $traceId = null;
+
+    try {
+        $response = $connector->send($request, $mockClient);
+        // Obtener el traceId incluso si falla, del pending request
+        $traceId = $response->getPendingRequest()->getHeaders()['X-Trace-Id'] ?? null;
+    } catch (RequestException $e) {
+        // El proceso de logging se ejecuta en el hook onFailure
+        $traceId = $e->getPendingRequest()->getHeaders()['X-Trace-Id'] ?? null;
+    }
+
+    // ASSERT: Comprobar registros en la base de datos
+    // Debe haber 1 REQUEST (inicio) y 1 EXCEPTION (fallo).
+    $this->assertDatabaseCount('api_traces', 2);
+
+    // 1. Verificar el registro de REQUEST
+    $this->assertDatabaseHas('api_traces', [
+        'trace_id' => $traceId,
+        'phase' => 'request',
+    ]);
+
+    // 2. Verificar el registro de EXCEPTION
+    $this->assertDatabaseHas('api_traces', [
+        'trace_id' => $traceId,
+        'phase' => 'exception',
+        'status' => 500, // Debería capturar el status de la excepción de respuesta
+    ]);
+
+    $exceptionTrace = ApiTrace::where('trace_id', $traceId)->where('phase', 'exception')->first();
+
+    // Verificar que los detalles de la excepción no están vacíos y contienen el mensaje
+    expect($exceptionTrace->response)
+        ->toBeArray()
+        ->and($exceptionTrace->response['message'])
+        ->toContain('Server Error');
+
+})->group('failure');

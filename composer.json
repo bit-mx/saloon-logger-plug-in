@@ -1,0 +1,75 @@
+{
+    "name": "emontan0/saloon-logger-plug-in",
+    "type": "laravel-package",
+    "version": "0.0.1",
+    "keywords": [
+        "laravel",
+        "saloon",
+        "api",
+        "tracer",
+        "logging"
+    ],
+    "autoload": {
+        "psr-4": {
+            "Emontano\\SaloonLoggerPlugIn\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Emontano\\SaloonLoggerPlugIn\\Tests\\": "Tests/",
+            "Workbench\\App\\": "workbench/app/",
+            "Workbench\\Database\\Factories\\": "workbench/database/factories/",
+            "Workbench\\Database\\Seeders\\": "workbench/database/seeders/"
+        }
+    },
+    "authors": [
+        {
+            "name": "emontano",
+            "email": "mgduardo91@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "laravel/framework": "^v12.35.0",
+        "saloonphp/saloon": "^3.0",
+        "saloonphp/laravel-plugin": "^3.0"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Emontano\\SaloonLoggerPlugIn\\ServiceProvider\\SaloonLoggerPlugInServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require-dev": {
+        "pestphp/pest": "^4.1",
+        "pestphp/pest-plugin-laravel": "^4.0",
+        "orchestra/testbench": "^10.6",
+        "laravel/pint": "^1.25"
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "scripts": {
+        "post-autoload-dump": [
+            "@clear",
+            "@prepare"
+        ],
+        "clear": "@php vendor/bin/testbench package:purge-skeleton --ansi",
+        "prepare": "@php vendor/bin/testbench package:discover --ansi",
+        "build": "@php vendor/bin/testbench workbench:build --ansi",
+        "serve": [
+            "Composer\\Config::disableProcessTimeout",
+            "@build",
+            "@php vendor/bin/testbench serve --ansi"
+        ],
+        "test": [
+            "@clear",
+            "@php vendor/bin/pest"
+        ]
+    }
+}

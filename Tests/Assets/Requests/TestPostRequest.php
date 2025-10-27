@@ -1,0 +1,50 @@
+<?php
+
+namespace Emontano\SaloonLoggerPlugIn\Tests\Assets\Requests;
+
+use Emontano\SaloonLoggerPlugIn\Traits\RequestHelper;
+use Saloon\Enums\Method;
+use Saloon\Http\Request;
+
+class TestPostRequest extends Request
+{
+    use RequestHelper;
+
+    public function __construct(
+        public string $id,
+        public string $name
+    ) {}
+
+    /**
+     * The HTTP method of the request
+     */
+    protected Method $method = Method::POST;
+
+    /**
+     * The endpoint for the request
+     */
+    public function resolveEndpoint(): string
+    {
+        return '/post';
+    }
+
+    protected function defaultHeaders(): array
+    {
+        return [
+            'Content-Type' => 'application/json',
+            'Accept' => 'application/json',
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    protected function defaultBody(): array
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'epoch' => now()->timestamp,
+        ];
+    }
+}
