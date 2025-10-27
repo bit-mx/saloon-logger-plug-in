@@ -46,7 +46,7 @@ This will create `config/saloon-logger.php`.
 ## Usage
 
 ### Step 1: Apply the Traits
-To enable traceability, add the `HasLogging` trait to your connector and the `RequestHelper` trait to your request.
+To enable traceability, add the `HasLogging` trait to your connector and the `ProvidesDefaultBody` trait to your request.
 
 Connector example:
 
@@ -68,13 +68,14 @@ class ExampleConnector extends Connector
 Request example:
 
 ```php
-use Emontano\SaloonLoggerPlugIn\Traits\RequestHelper;
+use Emontano\SaloonLoggerPlugIn\Traits\ProvidesDefaultBody;
+use Emontano\SaloonLoggerPlugIn\Contracts\HasDefaultBody;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
 
-class ExampleRequest extends Request
+class ExampleRequest extends Request  implements HasDefaultBody
 {
-    use RequestHelper;
+    use ProvidesDefaultBody;
 
     public function __construct(
         public string $id,

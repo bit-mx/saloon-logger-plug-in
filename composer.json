@@ -1,7 +1,7 @@
 {
     "name": "emontan0/saloon-logger-plug-in",
     "type": "laravel-package",
-    "version": "0.1.4",
+    "version": "0.2.0",
     "license": "MIT",
     "keywords": [
         "laravel",
@@ -48,11 +48,16 @@
         "pestphp/pest": "^4.1",
         "pestphp/pest-plugin-laravel": "^4.0",
         "orchestra/testbench": "^10.6",
-        "laravel/pint": "^1.25"
+        "laravel/pint": "^1.25",
+        "phpstan/phpstan": "^2.1",
+        "larastan/larastan": "^3.7",
+        "phpstan/extension-installer": "^1.4",
+        "rector/rector": "^2.2"
     },
     "config": {
         "allow-plugins": {
-            "pestphp/pest-plugin": true
+            "pestphp/pest-plugin": true,
+            "phpstan/extension-installer": true
         }
     },
     "scripts": {
@@ -71,6 +76,12 @@
         "test": [
             "@clear",
             "@php vendor/bin/pest"
+        ],
+        "check": [
+          "@clear",
+          "@php vendor/bin/pint",
+          "@php vendor/bin/pest",
+          "@php vendor/bin/phpstan analyse --ansi"
         ]
     }
 }

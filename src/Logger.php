@@ -2,6 +2,7 @@
 
 namespace Emontano\SaloonLoggerPlugIn;
 
+use Emontano\SaloonLoggerPlugIn\Contracts\HasDefaultBody;
 use Emontano\SaloonLoggerPlugIn\Models\SaloonLogger as SaloonLoggerModel;
 use Illuminate\Support\Str;
 use Saloon\Exceptions\Request\FatalRequestException;
@@ -29,7 +30,7 @@ class Logger
     }
 
     /**
-     * Registra la fase 'request'.
+     * @param  Request&HasDefaultBody  $request
      */
     public function logRequest(Request $request, Connector $connector): void
     {
@@ -43,9 +44,6 @@ class Logger
         ]);
     }
 
-    /**
-     * Registra la fase 'response'.
-     */
     public function logResponse(Response $response): void
     {
         $this->model->update([
@@ -55,9 +53,6 @@ class Logger
         ]);
     }
 
-    /**
-     * Registra la fase 'exception'.
-     */
     public function logException(FatalRequestException $exception): void
     {
         $this->model->update([
@@ -72,7 +67,8 @@ class Logger
     }
 
     /**
-     * Aplica la redacción de campos sensibles (e.g., password, api_key).
+     * @param  array<string,mixed>  $data
+     * @return array<string,mixed>
      */
     protected static function sanitizeData(array $data): array
     {
@@ -95,7 +91,7 @@ class Logger
     }
 
     /**
-     * Intenta obtener el cuerpo de la respuesta o el mensaje de error.
+     * @return array<string,mixed>|string
      */
     protected static function sanitizeResponse(Response $response): array|string
     {

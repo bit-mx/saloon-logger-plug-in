@@ -2,10 +2,14 @@
 
 namespace Emontano\SaloonLoggerPlugIn\Traits;
 
+use Saloon\Http\Request;
+
 /**
- * @method defaultBody()
+ * @template T of Request
+ *
+ * @mixin T
  */
-trait RequestHelper
+trait ProvidesDefaultBody
 {
     public function getDefaultBody(): array
     {

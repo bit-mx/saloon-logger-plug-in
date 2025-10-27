@@ -2,13 +2,14 @@
 
 namespace Emontano\SaloonLoggerPlugIn\Tests\Assets\Requests;
 
-use Emontano\SaloonLoggerPlugIn\Traits\RequestHelper;
+use Emontano\SaloonLoggerPlugIn\Contracts\HasDefaultBody;
+use Emontano\SaloonLoggerPlugIn\Traits\ProvidesDefaultBody;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
 
-class TestPostRequest extends Request
+class TestPostRequest extends Request implements HasDefaultBody
 {
-    use RequestHelper;
+    use ProvidesDefaultBody;
 
     public function __construct(
         public string $id,
