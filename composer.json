@@ -1,7 +1,7 @@
 {
     "name": "emontan0/saloon-logger-plug-in",
     "type": "laravel-package",
-    "version": "0.1.3",
+    "version": "0.1.4",
     "license": "MIT",
     "keywords": [
         "laravel",

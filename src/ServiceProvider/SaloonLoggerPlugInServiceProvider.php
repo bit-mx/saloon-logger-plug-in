@@ -13,7 +13,7 @@ class SaloonLoggerPlugInServiceProvider extends ServiceProvider
         ], 'saloon-logger-migrations');
 
         $this->publishes([
-            __DIR__.'/../../config/saloon_logger.php' => config_path('saloon-logger.php'),
+            __DIR__.'/../../config/saloon-logger.php' => config_path('saloon-logger.php'),
         ], 'saloon-logger-config');
 
     }
