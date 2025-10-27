@@ -25,7 +25,7 @@ This package transparently logs requests, responses and exceptions to the databa
 ### Install via Composer
 Install the package using Composer:
 
-> composer require emontan0/saloon-logger-plug-in
+> composer require BitMx/saloon-logger-plug-in
 
 ### Publish and run migrations
 This command will publish the migration into your `database/migrations` directory:
@@ -51,7 +51,7 @@ To enable traceability, add the `HasLogging` trait to your connector and the `Pr
 Connector example:
 
 ```php
-use Emontano\SaloonLoggerPlugIn\Traits\HasLogging;
+use BitMx\SaloonLoggerPlugIn\Traits\HasLogging;
 use Saloon\Http\Connector;
 
 class ExampleConnector extends Connector
@@ -68,8 +68,8 @@ class ExampleConnector extends Connector
 Request example:
 
 ```php
-use Emontano\SaloonLoggerPlugIn\Traits\ProvidesDefaultBody;
-use Emontano\SaloonLoggerPlugIn\Contracts\HasDefaultBody;
+use BitMx\SaloonLoggerPlugIn\Traits\ProvidesDefaultBody;
+use BitMx\SaloonLoggerPlugIn\Contracts\HasDefaultBody;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
 

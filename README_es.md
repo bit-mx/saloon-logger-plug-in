@@ -49,7 +49,7 @@ Para habilitar la trazabilidad, simplemente agregué los triaits
 
 ### Connector
 ```php
-use Emontano\SaloonLoggerPlugIn\Traits\HasLogging;
+use BitMx\SaloonLoggerPlugIn\Traits\HasLogging;
 use Saloon\Http\Connector;
 use Saloon\Traits\Plugins\AcceptsJson;
 
@@ -65,8 +65,8 @@ class ExampleConnector extends Connector
 ```
 ### Request
 ```php
-use Emontano\SaloonLoggerPlugIn\Traits\ProvidesDefaultBody;
-use Emontano\SaloonLoggerPlugIn\Contracts\HasDefaultBody;
+use BitMx\SaloonLoggerPlugIn\Traits\ProvidesDefaultBody;
+use BitMx\SaloonLoggerPlugIn\Contracts\HasDefaultBody;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
 

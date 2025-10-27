@@ -1,8 +1,8 @@
 <?php
 
-namespace Emontano\SaloonLoggerPlugIn\Tests\Assets;
+namespace BitMx\SaloonLoggerPlugIn\Tests\Assets;
 
-use Emontano\SaloonLoggerPlugIn\Traits\HasLogging;
+use BitMx\SaloonLoggerPlugIn\Traits\HasLogging;
 use Saloon\Http\Connector;
 use Saloon\Traits\Plugins\AcceptsJson;
 

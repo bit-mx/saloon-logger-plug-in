@@ -1,9 +1,9 @@
 <?php
 
-namespace Emontano\SaloonLoggerPlugIn\Tests\Assets\Requests;
+namespace BitMx\SaloonLoggerPlugIn\Tests\Assets\Requests;
 
-use Emontano\SaloonLoggerPlugIn\Contracts\HasDefaultBody;
-use Emontano\SaloonLoggerPlugIn\Traits\ProvidesDefaultBody;
+use BitMx\SaloonLoggerPlugIn\Contracts\HasDefaultBody;
+use BitMx\SaloonLoggerPlugIn\Traits\ProvidesDefaultBody;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
 

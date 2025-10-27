@@ -1,8 +1,8 @@
 <?php
 
-namespace Emontano\SaloonLoggerPlugIn\Traits;
+namespace BitMx\SaloonLoggerPlugIn\Traits;
 
-use Emontano\SaloonLoggerPlugIn\Logger;
+use BitMx\SaloonLoggerPlugIn\Logger;
 use Saloon\Exceptions\Request\FatalRequestException;
 use Saloon\Http\Connector;
 use Saloon\Http\PendingRequest;
