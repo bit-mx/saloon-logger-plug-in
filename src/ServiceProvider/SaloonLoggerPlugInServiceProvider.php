@@ -9,11 +9,11 @@ class SaloonLoggerPlugInServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->publishesMigrations([
-            __DIR__.'/../database/migrations' => database_path('migrations'),
+            __DIR__.'/../../database/migrations' => database_path('migrations'),
         ], 'saloon-logger-migrations');
 
         $this->publishes([
-            __DIR__.'/../config/saloon_logger.php' => config_path('saloon-logger.php'),
+            __DIR__.'/../../config/saloon_logger.php' => config_path('saloon-logger.php'),
         ], 'saloon-logger-config');
 
     }
