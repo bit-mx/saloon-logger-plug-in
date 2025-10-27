@@ -13,7 +13,7 @@
 
 use Saloon\Http\Faking\MockClient;
 
-pest()->extend(Emontano\SaloonLoggerPlugIn\Tests\TestCase::class)
+pest()->extend(BitMx\SaloonLoggerPlugIn\Tests\TestCase::class)
     ->use(Illuminate\Foundation\Testing\RefreshDatabase::class)
     ->in('Feature', 'Unit');
 

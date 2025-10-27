@@ -1,10 +1,10 @@
 <?php
 
-use Emontano\SaloonLoggerPlugIn\Models\SaloonLogger;
-use Emontano\SaloonLoggerPlugIn\Tests\Assets\Requests\TestGetRequest;
-use Emontano\SaloonLoggerPlugIn\Tests\Assets\Requests\TestPostRequest;
-use Emontano\SaloonLoggerPlugIn\Tests\Assets\TestJsonConnector;
-use Emontano\SaloonLoggerPlugIn\Tests\Assets\TestPlainTextConnector;
+use BitMx\SaloonLoggerPlugIn\Models\SaloonLogger;
+use BitMx\SaloonLoggerPlugIn\Tests\Assets\Requests\TestGetRequest;
+use BitMx\SaloonLoggerPlugIn\Tests\Assets\Requests\TestPostRequest;
+use BitMx\SaloonLoggerPlugIn\Tests\Assets\TestJsonConnector;
+use BitMx\SaloonLoggerPlugIn\Tests\Assets\TestPlainTextConnector;
 use Saloon\Http\Faking\MockClient;
 use Saloon\Http\Faking\MockResponse;
 

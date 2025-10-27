@@ -1,6 +1,6 @@
 <?php
 
-namespace Emontano\SaloonLoggerPlugIn\Traits;
+namespace BitMx\SaloonLoggerPlugIn\Traits;
 
 use Saloon\Http\Request;
 

@@ -1,8 +1,8 @@
 <?php
 
-namespace Emontano\SaloonLoggerPlugIn\Tests;
+namespace BitMx\SaloonLoggerPlugIn\Tests;
 
-use Emontano\SaloonLoggerPlugIn\ServiceProvider\SaloonLoggerPlugInServiceProvider;
+use BitMx\SaloonLoggerPlugIn\ServiceProvider\SaloonLoggerPlugInServiceProvider;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Orchestra\Testbench\Attributes\WithMigration;
 use Orchestra\Testbench\Concerns\WithWorkbench;

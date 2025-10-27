@@ -1,6 +1,6 @@
 <?php
 
-namespace Emontano\SaloonLoggerPlugIn\ServiceProvider;
+namespace BitMx\SaloonLoggerPlugIn\ServiceProvider;
 
 use Illuminate\Support\ServiceProvider;
 

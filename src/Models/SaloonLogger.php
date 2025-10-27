@@ -1,6 +1,6 @@
 <?php
 
-namespace Emontano\SaloonLoggerPlugIn\Models;
+namespace BitMx\SaloonLoggerPlugIn\Models;
 
 use Illuminate\Database\Eloquent\Model;
 

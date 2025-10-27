@@ -1,5 +1,5 @@
 {
-    "name": "emontan0/saloon-logger-plug-in",
+    "name": "bit-mx/saloon-logger-plug-in",
     "type": "laravel-package",
     "version": "0.2.0",
     "license": "MIT",
@@ -12,12 +12,12 @@
     ],
     "autoload": {
         "psr-4": {
-            "Emontano\\SaloonLoggerPlugIn\\": "src/"
+            "BitMx\\SaloonLoggerPlugIn\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Emontano\\SaloonLoggerPlugIn\\Tests\\": "Tests/",
+            "BitMx\\SaloonLoggerPlugIn\\Tests\\": "Tests/",
             "Workbench\\App\\": "workbench/app/",
             "Workbench\\Database\\Factories\\": "workbench/database/factories/",
             "Workbench\\Database\\Seeders\\": "workbench/database/seeders/"
@@ -26,7 +26,7 @@
     "authors": [
         {
             "name": "emontano",
-            "email": "mgduardo91@gmail.com"
+            "email": "emontano@bit.lat"
         }
     ],
     "require": {
@@ -38,7 +38,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Emontano\\SaloonLoggerPlugIn\\ServiceProvider\\SaloonLoggerPlugInServiceProvider"
+                "BitMx\\SaloonLoggerPlugIn\\ServiceProvider\\SaloonLoggerPlugInServiceProvider"
             ]
         }
     },
@@ -80,8 +80,8 @@
         "check": [
           "@clear",
           "@php vendor/bin/pint",
-          "@php vendor/bin/pest",
-          "@php vendor/bin/phpstan analyse --ansi"
+          "@php vendor/bin/phpstan analyse --ansi",
+          "@php vendor/bin/pest"
         ]
     }
 }

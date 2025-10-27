@@ -1,9 +1,9 @@
 <?php
 
-namespace Emontano\SaloonLoggerPlugIn;
+namespace BitMx\SaloonLoggerPlugIn;
 
-use Emontano\SaloonLoggerPlugIn\Contracts\HasDefaultBody;
-use Emontano\SaloonLoggerPlugIn\Models\SaloonLogger as SaloonLoggerModel;
+use BitMx\SaloonLoggerPlugIn\Contracts\HasDefaultBody;
+use BitMx\SaloonLoggerPlugIn\Models\SaloonLogger as SaloonLoggerModel;
 use Illuminate\Support\Str;
 use Saloon\Exceptions\Request\FatalRequestException;
 use Saloon\Http\Connector;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Emontano\SaloonLoggerPlugIn\Contracts;
+namespace BitMx\SaloonLoggerPlugIn\Contracts;
 
 interface HasDefaultBody
 {
