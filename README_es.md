@@ -28,7 +28,7 @@ estructurado.
 ```
 #### Instalación Composer
 Instala el paquete usando Composer:
-> composer require emontan0/saloon-logger-plug-in
+> composer require bit-mx/saloon-logger-plug-in
 
 #### Publicar y Ejecutar Migraciones
 Este comando publicará la migración en tu directorio database/migrations 
