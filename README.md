@@ -25,7 +25,7 @@ This package transparently logs requests, responses and exceptions to the databa
 ### Install via Composer
 Install the package using Composer:
 
-> composer require BitMx/saloon-logger-plug-in
+> composer require bit-mx/saloon-logger-plug-in
 
 ### Publish and run migrations
 This command will publish the migration into your `database/migrations` directory:
