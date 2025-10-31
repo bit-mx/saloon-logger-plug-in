@@ -10,6 +10,18 @@ class SaloonLogger extends Model
 
     protected $guarded = ['id'];
 
+    protected $fillable = [
+        'trace_id',
+        'phase',
+        'method',
+        'endpoint',
+        'headers',
+        'query',
+        'payload',
+        'status',
+        'response',
+    ];
+
     protected $casts = [
         'headers' => 'array',
         'query' => 'array',

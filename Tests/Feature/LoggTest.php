@@ -17,6 +17,7 @@ it('can log a json post request', function () {
     $connector = new TestJsonConnector;
     $request = new TestPostRequest('1', 'test');
     $connector->send($request);
+    /** @var SaloonLogger $trace */
     $trace = $connector->getLogger()->getModel()->trace_id;
 
     expect(SaloonLogger::count())->toBe(1);
