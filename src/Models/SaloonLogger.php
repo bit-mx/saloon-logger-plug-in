@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class SaloonLogger extends Model
 {
-    protected $table = 'saloon_logger';
+    protected $table = 'saloon_loggers';
 
     protected $guarded = ['id'];
 

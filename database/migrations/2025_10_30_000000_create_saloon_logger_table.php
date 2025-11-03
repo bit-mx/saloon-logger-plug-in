@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('saloon_logger', function (Blueprint $table) {
+        Schema::create('saloon_loggers', function (Blueprint $table) {
             $table->id();
             $table->ulid('trace_id')->index();
             $table->string('phase', 20);
@@ -31,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('saloon_logger');
+        Schema::dropIfExists('saloon_loggers');
     }
 };
