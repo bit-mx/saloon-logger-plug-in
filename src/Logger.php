@@ -67,11 +67,15 @@ class Logger
     }
 
     /**
-     * @param  array<string,mixed>  $data
-     * @return array<string,mixed>
+     * @param  string|array<string,mixed>  $data
+     * @return string|array<string,mixed>
      */
-    protected static function sanitizeData(array $data): array
+    protected static function sanitizeData(string|array $data): string|array
     {
+        if (is_string($data)) {
+            return $data;
+        }
+
         $sensitiveFields = config(
             'saloon-logger.redacted_fields',
             ['password', 'secret', 'key', 'token', 'authorization']

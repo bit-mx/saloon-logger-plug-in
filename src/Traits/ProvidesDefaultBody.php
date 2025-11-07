@@ -11,7 +11,7 @@ use Saloon\Http\Request;
  */
 trait ProvidesDefaultBody
 {
-    public function getDefaultBody(): array
+    public function getDefaultBody(): string|array
     {
         return $this->defaultBody();
     }

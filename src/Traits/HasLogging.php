@@ -66,7 +66,7 @@ trait HasLogging
             }
         });
 
-        if (config('api-tracer.propagate_header', true)) {
+        if (config('saloon-logger.propagate_header', true)) {
             try {
                 $request = $pendingRequest->getRequest();
                 $request->headers()->add('X-Trace-Id', $this->logger->getModel()->trace_id);
