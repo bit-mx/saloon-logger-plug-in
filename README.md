@@ -111,3 +111,35 @@ If an HTTP or network exception occurs (for example a 500), the package will log
 ### Other languages
 [Spanish](./README_es.md)
 
+## Custom sanitizers
+
+If you need a custom way to sanitize payloads or headers before they are stored, implement the `SanitizerContract` and register your class in the package configuration under the `sanitizers` array.
+
+Example custom sanitizer:
+
+```php
+namespace App\Sanitizers;
+
+use BitMx\SaloonLoggerPlugIn\Contracts\SanitizerContract;
+
+class MySanitizer implements SanitizerContract
+{
+    public static function sanitize(mixed $data): mixed
+    {
+        // perform your custom sanitization here
+        return $data;
+    }
+}
+```
+
+Then register it in `config/saloon-logger.php`:
+
+```php
+'sanitizers' => [
+    \BitMx\SaloonLoggerPlugIn\Sanitizers\JsonSanitizer::class,
+    \App\Sanitizers\MySanitizer::class,
+],
+```
+
+Sanitizers are applied in the order they appear in the configuration. Each sanitizer receives the current payload/headers (mixed) and must return the updated value.
+

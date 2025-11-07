@@ -1,5 +1,7 @@
 <?php
 
+use BitMx\SaloonLoggerPlugIn\Sanitizers\JsonSanitizer;
+
 return [
 
     /*
@@ -30,7 +32,10 @@ return [
     |
     */
     'propagate_header' => true,
-
+    'redacted_value' => '***REDACTED***',
+    'sanitizers' => [
+        JsonSanitizer::class,
+    ],
     'debug_mode' => env('APP_DEBUG', false),
 
 ];

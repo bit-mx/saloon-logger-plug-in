@@ -1,8 +1,11 @@
 <?php
 
 use BitMx\SaloonLoggerPlugIn\Models\SaloonLogger;
+use BitMx\SaloonLoggerPlugIn\Sanitizers\JsonSanitizer;
 use BitMx\SaloonLoggerPlugIn\Tests\Assets\Requests\TestGetRequest;
+use BitMx\SaloonLoggerPlugIn\Tests\Assets\Requests\TestPostPlainTextRequest;
 use BitMx\SaloonLoggerPlugIn\Tests\Assets\Requests\TestPostRequest;
+use BitMx\SaloonLoggerPlugIn\Tests\Assets\Sanitizers\TestTxtSanitizer;
 use BitMx\SaloonLoggerPlugIn\Tests\Assets\TestJsonConnector;
 use BitMx\SaloonLoggerPlugIn\Tests\Assets\TestPlainTextConnector;
 use Saloon\Http\Faking\MockClient;
@@ -123,5 +126,76 @@ it('can log a get request', function () {
         ->and($log->status)->toBe(200)
         ->and($log->response)->not()->toBeNull()
         ->and($log->response)->toBe('ok');
+
+});
+
+it('can log a post request text/plain', function () {
+
+    MockClient::global([
+        TestPostPlainTextRequest::class => MockResponse::make('ok'),
+    ]);
+
+    $connector = new TestPlainTextConnector;
+    $request = new TestPostPlainTextRequest('1', 'test');
+    $connector->send($request);
+    $trace = $connector->getLogger()->getModel()->trace_id;
+
+    expect(SaloonLogger::count())->toBe(1);
+    $log = SaloonLogger::first();
+
+    expect($log->trace_id)->toBe($trace)
+        ->and($log->phase)->toBe('response')
+        ->and($log->method)->toBe('POST')
+        ->and($log->endpoint)->toBe('https://google.com/post')
+        ->and($log->headers)->toBe([
+            'Content-Type' => 'text/plain',
+            'X-Trace-Id' => $trace,
+        ])
+        ->and($log->query)->toBe([])
+        ->and($log->status)->toBe(200)
+        ->and($log->response)->not()->toBeNull()
+        ->and($log->response)->toBe('ok');
+
+});
+
+it('can redacted sensitive data', function () {
+
+    MockClient::global([
+        TestGetRequest::class => MockResponse::make('ok'),
+    ]);
+
+    $connector = new TestPlainTextConnector;
+    $request = new TestGetRequest('1', 'test');
+    $connector->send($request);
+
+    expect(SaloonLogger::count())->toBe(1);
+    $log = SaloonLogger::first();
+
+    expect($log->payload)->toBe([
+        'id' => '1',
+        'name' => 'test',
+        'password' => '***REDACTED***',
+    ]);
+
+});
+
+it('can redacted sensitive data in custom Sanitizer', function () {
+
+    config(['saloon-logger.sanitizers'=>[
+        JsonSanitizer::class,
+        TestTxtSanitizer::class
+    ]]);
+
+    MockClient::global([
+        TestPostPlainTextRequest::class => MockResponse::make('ok'),
+    ]);
+
+    $connector = new TestPlainTextConnector;
+    $request = new TestPostPlainTextRequest('1', 'test');
+    $connector->send($request);
+
+    expect(SaloonLogger::count())->toBe(1);
+    $log = SaloonLogger::first();
+    expect($log->payload['password'])->toBe('***REDACTED***');
 
 });

@@ -3,6 +3,7 @@
 namespace BitMx\SaloonLoggerPlugIn;
 
 use BitMx\SaloonLoggerPlugIn\Contracts\HasDefaultBody;
+use BitMx\SaloonLoggerPlugIn\Contracts\SanitizerContract;
 use BitMx\SaloonLoggerPlugIn\Models\SaloonLogger as SaloonLoggerModel;
 use Illuminate\Support\Str;
 use Saloon\Exceptions\Request\FatalRequestException;
@@ -38,9 +39,9 @@ class Logger
             'phase' => 'request',
             'method' => $request->getMethod()->value,
             'endpoint' => $connector->resolveBaseUrl().$request->resolveEndpoint(),
-            'headers' => self::sanitizeData($request->headers()->all()),
-            'query' => self::sanitizeData($request->query()->all()),
-            'payload' => self::sanitizeData($request->getDefaultBody()),
+            'headers' => self::sanitize($request->headers()->all()),
+            'query' => self::sanitize($request->query()->all()),
+            'payload' => self::sanitize($request->getDefaultBody()),
         ]);
     }
 
@@ -66,29 +67,16 @@ class Logger
         ]);
     }
 
-    /**
-     * @param  string|array<string,mixed>  $data
-     * @return string|array<string,mixed>
-     */
-    protected static function sanitizeData(string|array $data): string|array
+    protected static function sanitize(mixed $data): mixed
     {
-        if (is_string($data)) {
-            return $data;
-        }
+        $sanitizers = config('saloon-logger.sanitizers', []);
 
-        $sensitiveFields = config(
-            'saloon-logger.redacted_fields',
-            ['password', 'secret', 'key', 'token', 'authorization']
-        );
-
-        foreach ($data as $key => $value) {
-
-            $lowerKey = Str::lower($key);
-            if (is_array($value)) {
-                $data[$key] = self::sanitizeData($value);
-            } elseif (in_array($lowerKey, $sensitiveFields)) {
-                $data[$key] = '***REDACTED***';
+        foreach ($sanitizers as $class) {
+            if (! class_exists($class) || ! is_a($class, SanitizerContract::class, true)) {
+                continue;
             }
+
+            $data = $class::sanitize($data);
         }
 
         return $data;
