@@ -1,11 +1,11 @@
 <?php
 
-namespace BitMx\SaloonLoggerPlugIn\Sanitizers;
+namespace BitMx\SaloonLoggerPlugIn\Sanitizers\Request;
 
-use BitMx\SaloonLoggerPlugIn\Contracts\SanitizerContract;
+use BitMx\SaloonLoggerPlugIn\Contracts\SanitizerRequestContract;
 use Illuminate\Support\Str;
 
-class JsonSanitizer implements SanitizerContract
+class JsonSanitizerRequest implements SanitizerRequestContract
 {
     public static function sanitize(mixed $data): mixed
     {

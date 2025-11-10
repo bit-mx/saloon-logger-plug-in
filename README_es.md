@@ -105,33 +105,60 @@ $connector->send($request);
 
 ## Sanitizadores personalizados
 
-Si necesitas una forma personalizada de sanitizar los payloads o headers antes de almacenarlos, implementa la interfaz `SanitizerContract` y registra tu clase en la configuración del paquete dentro del arreglo `sanitizers`.
+Si necesitas una forma personalizada de sanitizar los payloads o headers antes de almacenarlos, implementa la interfaz `SanitizerRequestContract` y registra tu clase en la configuración del paquete dentro del arreglo `sanitizers.request`.
 
-Ejemplo de sanitizador personalizado:
+Ejemplo de sanitizador personalizado de request:
 
 ```php
 namespace App\Sanitizers;
 
-use BitMx\SaloonLoggerPlugIn\Contracts\SanitizerContract;
+use BitMx\SaloonLoggerPlugIn\Contracts\SanitizerRequestContract;
 
-class MySanitizer implements SanitizerContract
+class MyRequestSanitizer implements SanitizerRequestContract
 {
     public static function sanitize(mixed $data): mixed
     {
-        // realiza aquí tu lógica de sanitización
+        // perform your custom sanitization here
+        return $data;
+    }
+}
+```
+Si necesitas una forma personalizada de sanitizar el response antes de almacenarlos, implementa la interfaz `SanitizerResponseContract` y registra tu clase en la configuración del paquete dentro del arreglo `sanitizers.response`.
+
+Ejemplo de sanitizador personalizado de response:
+
+```php
+namespace App\Sanitizers;
+
+use BitMx\SaloonLoggerPlugIn\Contracts\SanitizerResponseContract;
+use Saloon\Http\Response;
+
+class MyResponseSanitizer implements SanitizerResponseContract
+{
+    public static function sanitize(Response $data): mixed
+    {
+        // perform your custom sanitization here
         return $data;
     }
 }
 ```
 
+
+
 Regístralo en `config/saloon-logger.php`:
 
 ```php
 'sanitizers' => [
-    \BitMx\SaloonLoggerPlugIn\Sanitizers\JsonSanitizer::class,
-    \App\Sanitizers\MySanitizer::class,
-],
+        'request' => [
+            \BitMx\SaloonLoggerPlugIn\Sanitizers\Request\JsonSanitizerRequest::class,
+            \App\Sanitizers\MyRequestSanitizer::class,
+        ],
+        'response' => [
+            \BitMx\SaloonLoggerPlugIn\Sanitizers\Response\JsonSanitizerResponse::class,
+            \App\Sanitizers\MyResponseSanitizer::class,
+        ],
+    ],
 ```
 
-Los sanitizadores se aplican en el orden en que aparecen en la configuración. Cada sanitizador recibe el payload/headers actual (mixed) y debe devolver el valor transformado.
+Los sanitizadores se aplican en el orden en que aparecen en la configuración. Cada sanitizador recibe los datos y debe devolver el valor transformado.
 

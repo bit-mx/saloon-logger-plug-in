@@ -2,7 +2,7 @@
 
 namespace BitMx\SaloonLoggerPlugIn\Contracts;
 
-interface SanitizerContract
+interface SanitizerRequestContract
 {
     public static function sanitize(mixed $data): mixed;
 }

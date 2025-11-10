@@ -3,7 +3,6 @@
 namespace BitMx\SaloonLoggerPlugIn;
 
 use BitMx\SaloonLoggerPlugIn\Contracts\HasDefaultBody;
-use BitMx\SaloonLoggerPlugIn\Contracts\SanitizerContract;
 use BitMx\SaloonLoggerPlugIn\Models\SaloonLogger as SaloonLoggerModel;
 use Illuminate\Support\Str;
 use Saloon\Exceptions\Request\FatalRequestException;
@@ -14,6 +13,8 @@ use Saloon\Http\Response;
 class Logger
 {
     public SaloonLoggerModel $model;
+
+    public Sanitizer $sanitizer;
 
     public function __construct()
     {
@@ -28,6 +29,7 @@ class Logger
             'status' => null,
             'response' => null,
         ]);
+        $this->sanitizer = new Sanitizer;
     }
 
     /**
@@ -39,18 +41,19 @@ class Logger
             'phase' => 'request',
             'method' => $request->getMethod()->value,
             'endpoint' => $connector->resolveBaseUrl().$request->resolveEndpoint(),
-            'headers' => self::sanitize($request->headers()->all()),
-            'query' => self::sanitize($request->query()->all()),
-            'payload' => self::sanitize($request->getDefaultBody()),
+            'headers' => $this->sanitizer->request($request->headers()->all()),
+            'query' => $this->sanitizer->request($request->query()->all()),
+            'payload' => $this->sanitizer->request($request->getDefaultBody()),
         ]);
     }
 
     public function logResponse(Response $response): void
     {
+
         $this->model->update([
             'phase' => 'response',
             'status' => $response->status(),
-            'response' => self::sanitizeResponse($response),
+            'response' => $this->sanitizer->response($response),
         ]);
     }
 
@@ -65,38 +68,6 @@ class Logger
                 'trace' => $exception->getTraceAsString(),
             ],
         ]);
-    }
-
-    protected static function sanitize(mixed $data): mixed
-    {
-        $sanitizers = config('saloon-logger.sanitizers', []);
-
-        foreach ($sanitizers as $class) {
-            if (! class_exists($class) || ! is_a($class, SanitizerContract::class, true)) {
-                continue;
-            }
-
-            $data = $class::sanitize($data);
-        }
-
-        return $data;
-    }
-
-    /**
-     * @return array<string,mixed>|string
-     */
-    protected static function sanitizeResponse(Response $response): array|string
-    {
-        // Si es una respuesta JSON, devuelve el array. Si no, devuelve el cuerpo como string (limitado).
-        try {
-            if ($response->json()) {
-                return $response->json();
-            }
-        } catch (\JsonException) {
-        }
-
-        // Limita el tamaño del cuerpo de la respuesta para evitar almacenar archivos binarios grandes
-        return Str::limit($response->body(), 5000);
     }
 
     public function getModel(): SaloonLoggerModel

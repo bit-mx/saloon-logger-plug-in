@@ -1,11 +1,11 @@
 <?php
 
 use BitMx\SaloonLoggerPlugIn\Models\SaloonLogger;
-use BitMx\SaloonLoggerPlugIn\Sanitizers\JsonSanitizer;
+use BitMx\SaloonLoggerPlugIn\Sanitizers\Request\JsonSanitizerRequest;
 use BitMx\SaloonLoggerPlugIn\Tests\Assets\Requests\TestGetRequest;
 use BitMx\SaloonLoggerPlugIn\Tests\Assets\Requests\TestPostPlainTextRequest;
 use BitMx\SaloonLoggerPlugIn\Tests\Assets\Requests\TestPostRequest;
-use BitMx\SaloonLoggerPlugIn\Tests\Assets\Sanitizers\TestTxtSanitizer;
+use BitMx\SaloonLoggerPlugIn\Tests\Assets\Sanitizers\TestTxtSanitizerRequest;
 use BitMx\SaloonLoggerPlugIn\Tests\Assets\TestJsonConnector;
 use BitMx\SaloonLoggerPlugIn\Tests\Assets\TestPlainTextConnector;
 use Saloon\Http\Faking\MockClient;
@@ -181,9 +181,9 @@ it('can redacted sensitive data', function () {
 
 it('can redacted sensitive data in custom Sanitizer', function () {
 
-    config(['saloon-logger.sanitizers' => [
-        JsonSanitizer::class,
-        TestTxtSanitizer::class,
+    config(['saloon-logger.sanitizers.request' => [
+        JsonSanitizerRequest::class,
+        TestTxtSanitizerRequest::class,
     ]]);
 
     MockClient::global([

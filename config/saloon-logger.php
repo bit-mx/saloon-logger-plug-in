@@ -1,6 +1,7 @@
 <?php
 
-use BitMx\SaloonLoggerPlugIn\Sanitizers\JsonSanitizer;
+use BitMx\SaloonLoggerPlugIn\Sanitizers\Request\JsonSanitizerRequest;
+use BitMx\SaloonLoggerPlugIn\Sanitizers\Response\JsonSanitizerResponse;
 
 return [
 
@@ -34,7 +35,12 @@ return [
     'propagate_header' => true,
     'redacted_value' => '***REDACTED***',
     'sanitizers' => [
-        JsonSanitizer::class,
+        'request' => [
+            JsonSanitizerRequest::class,
+        ],
+        'response' => [
+            JsonSanitizerResponse::class,
+        ],
     ],
     'debug_mode' => env('APP_DEBUG', false),
 

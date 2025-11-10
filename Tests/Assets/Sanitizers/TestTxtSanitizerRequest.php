@@ -2,10 +2,10 @@
 
 namespace BitMx\SaloonLoggerPlugIn\Tests\Assets\Sanitizers;
 
-use BitMx\SaloonLoggerPlugIn\Contracts\SanitizerContract;
-use BitMx\SaloonLoggerPlugIn\Sanitizers\JsonSanitizer;
+use BitMx\SaloonLoggerPlugIn\Contracts\SanitizerRequestContract;
+use BitMx\SaloonLoggerPlugIn\Sanitizers\Request\JsonSanitizerRequest;
 
-class TestTxtSanitizer implements SanitizerContract
+class TestTxtSanitizerRequest implements SanitizerRequestContract
 {
     public static function sanitize(mixed $data): mixed
     {
@@ -21,7 +21,7 @@ class TestTxtSanitizer implements SanitizerContract
             return $data;
         }
 
-        return JsonSanitizer::sanitize($json);
+        return JsonSanitizerRequest::sanitize($json);
 
     }
 }
