@@ -9,11 +9,11 @@ class TestTxtSanitizer implements SanitizerContract
 {
     public static function sanitize(mixed $data): mixed
     {
-        if (!is_string($data)) {
+        if (! is_string($data)) {
             return $data;
         }
 
-        $data = str_replace('d=', "", $data);
+        $data = str_replace('d=', '', $data);
 
         $json = json_decode($data, true);
 

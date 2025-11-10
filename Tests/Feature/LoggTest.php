@@ -181,9 +181,9 @@ it('can redacted sensitive data', function () {
 
 it('can redacted sensitive data in custom Sanitizer', function () {
 
-    config(['saloon-logger.sanitizers'=>[
+    config(['saloon-logger.sanitizers' => [
         JsonSanitizer::class,
-        TestTxtSanitizer::class
+        TestTxtSanitizer::class,
     ]]);
 
     MockClient::global([

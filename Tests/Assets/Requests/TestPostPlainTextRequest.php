@@ -44,7 +44,7 @@ class TestPostPlainTextRequest extends Request implements HasBody, HasDefaultBod
             'id' => $this->id,
             'name' => $this->name,
             'epoch' => now()->timestamp,
-            'password' => 'secret'
+            'password' => 'secret',
         ];
 
         return 'd='.json_encode($data);
