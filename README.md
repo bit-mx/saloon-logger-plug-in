@@ -169,3 +169,8 @@ Then register it in `config/saloon-logger.php`:
 
 Sanitizers are applied in the order they appear in the configuration. Each sanitizer receives the data and must return the updated value.
 
+# Prune & Backup
+
+You can configure the package to prune old records and make a backup of the records.
+The options are available separately in the configuration file
+

@@ -44,4 +44,24 @@ return [
     ],
     'debug_mode' => env('APP_DEBUG', false),
 
+    'prune' => [
+        // Active prune
+        'active' => false,
+        // Conditions to prune
+        'field' => 'created_at',
+        'field_value' => function () {
+            return now()->subMonth();
+        },
+        'field_comparison' => '<=',
+        'backup' => [
+            // Active backup
+            'active' => false,
+            // Backup disk
+            'disk' => 'local',
+            // Backup path
+            'prefix_file_name' => 'saloon_logger',
+            'suffix_file_name' => '',
+        ],
+    ],
+
 ];

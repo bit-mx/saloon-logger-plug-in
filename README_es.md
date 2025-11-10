@@ -162,3 +162,9 @@ Regístralo en `config/saloon-logger.php`:
 
 Los sanitizadores se aplican en el orden en que aparecen en la configuración. Cada sanitizador recibe los datos y debe devolver el valor transformado.
 
+# Prune & Backup
+
+Puedes configurar el paquete para eliminar registros antiguos 
+y hacer una copia de seguridad de los registros, 
+las opciones están disponibles por separado en el archivo de configuración
+
