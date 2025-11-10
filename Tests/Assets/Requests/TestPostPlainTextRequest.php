@@ -4,12 +4,14 @@ namespace BitMx\SaloonLoggerPlugIn\Tests\Assets\Requests;
 
 use BitMx\SaloonLoggerPlugIn\Contracts\HasDefaultBody;
 use BitMx\SaloonLoggerPlugIn\Traits\ProvidesDefaultBody;
+use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
+use Saloon\Traits\Body\HasStringBody;
 
-class TestGetRequest extends Request implements HasDefaultBody
+class TestPostPlainTextRequest extends Request implements HasBody, HasDefaultBody
 {
-    use ProvidesDefaultBody;
+    use HasStringBody,ProvidesDefaultBody;
 
     public function __construct(
         public string $id,
@@ -19,33 +21,32 @@ class TestGetRequest extends Request implements HasDefaultBody
     /**
      * The HTTP method of the request
      */
-    protected Method $method = Method::GET;
+    protected Method $method = Method::POST;
 
     /**
      * The endpoint for the request
      */
     public function resolveEndpoint(): string
     {
-        return '/get';
+        return '/post';
     }
 
     protected function defaultHeaders(): array
     {
         return [
-            'Content-Type' => 'application/json',
-            'Accept' => 'application/json',
+            'Content-Type' => 'text/plain',
         ];
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    protected function defaultBody(): array
+    protected function defaultBody(): string
     {
-        return [
+        $data = [
             'id' => $this->id,
             'name' => $this->name,
-            'password' => '1234567890',
+            'epoch' => now()->timestamp,
+            'password' => 'secret',
         ];
+
+        return 'd='.json_encode($data);
     }
 }
