@@ -3,56 +3,83 @@
 namespace BitMx\SaloonLoggerPlugIn;
 
 use BitMx\SaloonLoggerPlugIn\Models\SaloonLogger;
+use Closure;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Storage;
 
 class LoggerPruner
 {
+    private bool $isPrunable;
+
+    private bool $isBackupable;
+
+    private string $field;
+
+    private string $fieldComparison;
+
+    private Closure $fieldValue;
+
+    private string $prefix;
+
+    private string $suffix;
+
+    private string $disk;
+
+    public function __construct()
+    {
+        $this->isPrunable = config('saloon-logger.prune.active', false);
+        $this->isBackupable = config('saloon-logger.prune.backup.active', false);
+        $this->field = config('saloon-logger.prune.field');
+        $this->fieldComparison = config('saloon-logger.prune.field_comparison');
+        $this->fieldValue = config('saloon-logger.prune.field_value');
+        $this->prefix = config('saloon-logger.prune.prefix', '');
+        $this->suffix = config('saloon-logger.prune.suffix', '');
+        $this->disk = config('saloon-logger.storage.disk', 'local');
+    }
+
     /**
      * @return Builder<SaloonLogger>
      */
     public function getPruneCondition(): Builder
     {
-        $isPrunable = config('saloon-logger.prune.active', false);
-
-        if (! $isPrunable) {
+        if (! $this->isPrunable) {
             return SaloonLogger::query()->whereRaw('1 = 0');
         }
-        $field = config('saloon-logger.prune.field');
-        $field_value = config('saloon-logger.prune.field_value');
-        $field_comparison = config('saloon-logger.prune.field_comparison');
+        $closure = $this->fieldValue;
 
-        return SaloonLogger::query()->where($field, $field_comparison, $field_value());
+        return SaloonLogger::query()->where(
+            $this->field,
+            $this->fieldComparison,
+            $closure()
+        );
     }
 
     public function pruning(string $name): void
     {
-        $isPrunable = config('saloon-logger.prune.active', false);
-        $isBackupable = config('saloon-logger.prune.backup.active', false);
-        if (! $isPrunable) {
+        if (! $this->isPrunable) {
             return;
         }
-        if (! $isBackupable) {
-            return;
-        }
-
-        $prefix = config('saloon-logger.prune.prefix');
-        $suffix = config('saloon-logger.prune.suffix');
-
-        $registers = SaloonLogger::query()->where(
-            config('saloon-logger.prune.field'),
-            config('saloon-logger.prune.field_comparison'),
-            config('saloon-logger.prune.field_value')()
-        )->get();
-
-        if ($registers->isEmpty()) {
+        if (! $this->isBackupable) {
             return;
         }
 
-        $name = $prefix.$name.$suffix;
-        $content = $registers->toJson(JSON_UNESCAPED_SLASHES);
+        $closure = $this->fieldValue;
+        $registersChunk = SaloonLogger::query()->where(
+            $this->field,
+            $this->fieldComparison,
+            $closure()
+        )->lazy(500);
 
-        Storage::disk(name : config('saloon-logger.storage.disk'))
-            ->put($name, $content);
+        if ($registersChunk->isEmpty()) {
+            return;
+        }
+
+        $name = $this->prefix.$name.$this->suffix;
+
+        $backup = new Backup;
+        $backup->handle(
+            $registersChunk,
+            $name,
+            $this->disk
+        );
     }
 }

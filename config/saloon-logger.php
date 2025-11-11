@@ -2,6 +2,7 @@
 
 use BitMx\SaloonLoggerPlugIn\Sanitizers\Request\JsonSanitizerRequest;
 use BitMx\SaloonLoggerPlugIn\Sanitizers\Response\JsonSanitizerResponse;
+use BitMx\SaloonLoggerPlugIn\Transformers\JsonLTransformer;
 
 return [
 
@@ -10,8 +11,7 @@ return [
     | Redacted Fields
     |--------------------------------------------------------------------------
     |
-    | Lista de campos (claves) de headers o payloads que deben ser censurados
-    | (reemplazados por '***REDACTED***') antes de ser almacenados en la DB.
+    | Fields to be redacted (replaced by '***REDACTED***') before being stored in the DB.
     |
     */
     'redacted_fields' => [
@@ -27,13 +27,22 @@ return [
     |--------------------------------------------------------------------------
     | Propagate X-Trace-Id Header
     |--------------------------------------------------------------------------
-    |
-    | Si se establece en true, el plugin agregará automáticamente un header
-    | X-Trace-Id a cada petición saliente con el ULID generado para la traza.
+    | If set to true, the plugin will automatically add an X-Trace-Id header
+    | to each outgoing request
     |
     */
     'propagate_header' => true,
     'redacted_value' => '***REDACTED***',
+    /*
+    |--------------------------------------------------------------------------
+    | Sanitizers
+    |--------------------------------------------------------------------------
+    |
+    | List of Sanitizers to be applied to the request and response data.
+    | These sanitizers need to implement the SaloonSanitizerRequest and SaloonSanitizerResponse interfaces.
+    | JsonSanitizerRequest y JsonSanitizerResponse is for JSON.
+    |
+    */
     'sanitizers' => [
         'request' => [
             JsonSanitizerRequest::class,
@@ -43,7 +52,16 @@ return [
         ],
     ],
     'debug_mode' => env('APP_DEBUG', false),
-
+    /*
+    |--------------------------------------------------------------------------
+    | Prune
+    |--------------------------------------------------------------------------
+    | If set to true, the plugin will automatically prune the SaloonLogger table
+    | when the prune command is executed.
+    | php artisan model:prune
+    |
+    |
+    */
     'prune' => [
         // Active prune
         'active' => false,
@@ -53,6 +71,14 @@ return [
             return now()->subMonth();
         },
         'field_comparison' => '<=',
+        /*
+        |--------------------------------------------------------------------------
+        | Backup before prune
+        |--------------------------------------------------------------------------
+        | If set to true, the plugin will automatically back up the SaloonLogger table
+        |
+        |
+        */
         'backup' => [
             // Active backup
             'active' => false,
@@ -61,6 +87,23 @@ return [
             // Backup path
             'prefix_file_name' => 'saloon_logger',
             'suffix_file_name' => '',
+            /*
+            |--------------------------------------------------------------------------
+            | Backup Transformers
+            |--------------------------------------------------------------------------
+            | The transformers to be used to determine how to back up the SaloonLogger table.
+            | They need to implement the SaloonLoggerBackupTransformer interface.
+            |
+            */
+            'transformers' => [
+                JsonLTransformer::class,
+                /*
+                * The BitMx\SaloonLoggerPlugIn\Transformers\ZipJsonLTransformer
+                * requires the zip extension to be installed.
+                * This transformer needs JsonLTransformer::class
+                */
+                // ZipJsonLTransformer::class,
+            ],
         ],
     ],
 

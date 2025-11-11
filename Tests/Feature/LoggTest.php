@@ -11,6 +11,8 @@ use BitMx\SaloonLoggerPlugIn\Tests\Assets\TestPlainTextConnector;
 use Saloon\Http\Faking\MockClient;
 use Saloon\Http\Faking\MockResponse;
 
+use function Pest\Laravel\assertDatabaseCount;
+
 it('can log a json post request', function () {
 
     MockClient::global([
@@ -23,7 +25,7 @@ it('can log a json post request', function () {
     /** @var SaloonLogger $trace */
     $trace = $connector->getLogger()->getModel()->trace_id;
 
-    expect(SaloonLogger::count())->toBe(1);
+    assertDatabaseCount(SaloonLogger::class, 1);
     $log = SaloonLogger::first();
     expect($log->trace_id)->toBe($trace)
         ->and($log->phase)->toBe('response')
@@ -51,7 +53,7 @@ it('can log a json get request', function () {
     $connector->send($request);
     $trace = $connector->getLogger()->getModel()->trace_id;
 
-    expect(SaloonLogger::count())->toBe(1);
+    assertDatabaseCount(SaloonLogger::class, 1);
     $log = SaloonLogger::first();
 
     expect($log->trace_id)->toBe($trace)
@@ -80,7 +82,7 @@ it('can log a post request', function () {
     $connector->send($request);
     $trace = $connector->getLogger()->getModel()->trace_id;
 
-    expect(SaloonLogger::count())->toBe(1);
+    assertDatabaseCount(SaloonLogger::class, 1);
     $log = SaloonLogger::first();
 
     expect($log->trace_id)->toBe($trace)
@@ -110,7 +112,7 @@ it('can log a get request', function () {
     $connector->send($request);
     $trace = $connector->getLogger()->getModel()->trace_id;
 
-    expect(SaloonLogger::count())->toBe(1);
+    assertDatabaseCount(SaloonLogger::class, 1);
     $log = SaloonLogger::first();
 
     expect($log->trace_id)->toBe($trace)
@@ -140,7 +142,7 @@ it('can log a post request text/plain', function () {
     $connector->send($request);
     $trace = $connector->getLogger()->getModel()->trace_id;
 
-    expect(SaloonLogger::count())->toBe(1);
+    assertDatabaseCount(SaloonLogger::class, 1);
     $log = SaloonLogger::first();
 
     expect($log->trace_id)->toBe($trace)
@@ -168,7 +170,7 @@ it('can redacted sensitive data', function () {
     $request = new TestGetRequest('1', 'test');
     $connector->send($request);
 
-    expect(SaloonLogger::count())->toBe(1);
+    assertDatabaseCount(SaloonLogger::class, 1);
     $log = SaloonLogger::first();
 
     expect($log->payload)->toBe([
@@ -194,8 +196,25 @@ it('can redacted sensitive data in custom Sanitizer', function () {
     $request = new TestPostPlainTextRequest('1', 'test');
     $connector->send($request);
 
-    expect(SaloonLogger::count())->toBe(1);
+    assertDatabaseCount(SaloonLogger::class, 1);
     $log = SaloonLogger::first();
     expect($log->payload['password'])->toBe('***REDACTED***');
+
+});
+
+it('in despite not having sanitizer', function () {
+
+    config(['saloon-logger.sanitizers.request' => [
+    ]]);
+
+    MockClient::global([
+        TestPostPlainTextRequest::class => MockResponse::make('ok'),
+    ]);
+
+    $connector = new TestPlainTextConnector;
+    $request = new TestPostPlainTextRequest('1', 'test');
+    $connector->send($request);
+
+    assertDatabaseCount(SaloonLogger::class, 1);
 
 });

@@ -2,6 +2,8 @@
 
 use BitMx\SaloonLoggerPlugIn\LoggerPruner;
 use BitMx\SaloonLoggerPlugIn\Models\SaloonLogger;
+use BitMx\SaloonLoggerPlugIn\Transformers\JsonLTransformer;
+use BitMx\SaloonLoggerPlugIn\Transformers\ZipJsonLTransformer;
 
 use function Pest\Laravel\assertDatabaseCount;
 use function Pest\Laravel\travel;
@@ -41,15 +43,17 @@ it('prunes old log entries and backup', function () {
     config(['saloon-logger.prune.active' => true]);
     config(['saloon-logger.prune.backup.active' => true]);
     config(['saloon-logger.prune.backup.prefix_file_name' => 'test']);
+    config(['saloon-logger.prune.backup.transformers' => [
+        JsonLTransformer::class,
+        ZipJsonLTransformer::class,
+    ]]);
     createSaloonLogger(3);
     travel(1)->month();
     createSaloonLogger();
     assertDatabaseCount(SaloonLogger::class, 4);
 
     (new LoggerPruner)->pruning($filename);
-
-    Storage::disk('local')->assertExists($filename);
-    $file = Storage::disk('local')->get($filename);
-    expect(count(json_decode($file, true)))->toBe(3);
+    $fullFilename = $filename.'.zip';
+    Storage::disk('local')->assertExists($fullFilename);
 
 });
